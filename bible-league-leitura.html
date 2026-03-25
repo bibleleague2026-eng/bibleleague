@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bible League - Leitura</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Bebas+Neue&family=VT323&family=Poppins:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ========== VARIÁVEIS E TEMAS ========== */
+        :root {
+            --primary: #00A2FF;
+            --secondary: #00E676;
+            --bg: #f0f2f5;
+            --card: #fff;
+            --text: #333;
+            --font: 'Poppins', sans-serif;
+            --radius: 12px;
+        }
+        .theme-roblox {
+            --primary: #00A2FF;
+            --secondary: #00E676;
+            --bg: #e9eef6;
+            --card: #ffffff;
+            --text: #1f2a37;
+            --font: 'Montserrat', 'Poppins', sans-serif;
+            --radius: 16px;
+        }
+        .theme-ff {
+            --primary: #FFD600;
+            --secondary: #FF3D00;
+            --bg: #07080b;
+            --card: rgba(18, 20, 26, 0.92);
+            --text: #f2f4f8;
+            --font: 'Bebas Neue', sans-serif;
+            --radius: 8px;
+        }
+        .theme-minecraft {
+            --primary: #55c93f;
+            --secondary: #a6773b;
+            --bg: #c9c9c9;
+            --card: #f1f1f1;
+            --text: #111;
+            --font: 'VT323', monospace;
+            --radius: 0;
+        }
+        .theme-raiz {
+            --primary: #6b4e2e;
+            --secondary: #2e7d32;
+            --bg: #f3e5c0;
+            --card: #fff6db;
+            --text: #2a1c10;
+            --font: 'IM Fell English', serif;
+            --radius: 10px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.6; transition: background-color 0.3s, color 0.3s; }
+        body.theme-roblox {
+            background-image:
+                radial-gradient(circle at 20% 15%, rgba(0,162,255,0.18), transparent 42%),
+                radial-gradient(circle at 85% 30%, rgba(0,230,118,0.14), transparent 44%),
+                linear-gradient(0deg, rgba(255,255,255,0.72), rgba(255,255,255,0.72));
+        }
+        body.theme-ff {
+            background-image:
+                radial-gradient(circle at 30% 25%, rgba(255,214,0,0.12), transparent 45%),
+                radial-gradient(circle at 75% 35%, rgba(255,61,0,0.14), transparent 45%),
+                linear-gradient(135deg, rgba(0,0,0,0.9), rgba(10,10,14,0.96));
+        }
+        body.theme-minecraft {
+            background-image:
+                linear-gradient(0deg, rgba(0,0,0,0.06), rgba(0,0,0,0.06)),
+                repeating-linear-gradient(90deg, rgba(0,0,0,0.04) 0 6px, rgba(255,255,255,0.02) 6px 12px);
+            image-rendering: pixelated;
+        }
+
+        .screen { display: none; padding: 8px 16px 24px; max-width: 850px; margin: 0 auto; min-height: 100vh; }
+        .screen.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* ========== SKINS ========== */
+        .screen-skins__title { text-align: center; font-size: 2.5rem; margin: 4px 0 16px; color: var(--primary); }
+        .skin-list { display: flex; flex-direction: column; gap: 15px; margin-top: 10px; }
+        .skin-card {
+            width: 100%; padding: 25px; text-align: center; border-radius: 15px; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 2px solid transparent;
+        }
+        .skin-card { position: relative; overflow: hidden; }
+        .skin-card h2 { letter-spacing: 0.5px; }
+        .skin-card.rb {
+            background: linear-gradient(135deg, #00A2FF 0%, #0066ff 55%, #00E676 140%);
+            color: #fff;
+        }
+        .skin-card.rb::before{
+            content:'';
+            position:absolute; inset:-40px;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.20), transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(0,0,0,0.18), transparent 55%);
+            transform: rotate(8deg);
+        }
+        .skin-card.ff {
+            background: linear-gradient(135deg, #0b0b0f 0%, #1a0f10 45%, #3a1206 100%);
+            color: #fff;
+            border-color: rgba(255, 214, 0, 0.28);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .skin-card.ff::after{
+            content:'';
+            position:absolute; inset:0;
+            background:
+                radial-gradient(circle at 25% 30%, rgba(255,214,0,0.22), transparent 45%),
+                radial-gradient(circle at 75% 60%, rgba(255,61,0,0.25), transparent 55%),
+                linear-gradient(90deg, rgba(255,255,255,0.05), transparent 30%, rgba(255,255,255,0.03));
+            mix-blend-mode: screen;
+        }
+        .skin-card.mc {
+            background: linear-gradient(180deg, #78d855 0%, #2f8f33 65%, #1e6f29 100%);
+            color: #fff;
+            border-color: #111;
+            border-width: 3px;
+            border-radius: 0;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.35);
+        }
+        .skin-card.mc::before{
+            content:'';
+            position:absolute; inset:0;
+            background:
+                repeating-linear-gradient(0deg, rgba(0,0,0,0.12) 0 6px, rgba(255,255,255,0.03) 6px 12px),
+                repeating-linear-gradient(90deg, rgba(0,0,0,0.10) 0 6px, rgba(255,255,255,0.02) 6px 12px);
+            opacity: 0.25;
+        }
+        .skin-card.raiz {
+            background: linear-gradient(135deg, #f7e7bf 0%, #e7d2a3 55%, #d5b981 100%);
+            color: #2a1c10;
+            border-color: rgba(107, 78, 46, 0.45);
+        }
+        .skin-card > * { position: relative; z-index: 1; }
+
+        /* ========== DASHBOARD ========== */
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px; }
+        .dashboard-header__title { font-size: 1.2rem; }
+        .dashboard-header__title small { font-size: 0.5em; opacity: 0.5; }
+        .dashboard-header__actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .notice-card { background: var(--card); border-radius: var(--radius); padding: 12px 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 18px; }
+        .notice-card b { color: var(--primary); }
+
+        .section-title { margin: 25px 0 10px; font-size: 1.1rem; opacity: 0.8; border-left: 5px solid var(--primary); padding-left: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); gap: 10px; }
+        .card-item {
+            background: var(--card); padding: 12px; border-radius: var(--radius); text-align: center; cursor: pointer;
+            font-size: 0.85rem; border-bottom: 4px solid rgba(0,0,0,0.1);
+        }
+        body.theme-roblox .card-item {
+            border-radius: 14px;
+            border: 1px solid rgba(31,42,55,0.10);
+            box-shadow: 0 10px 18px rgba(15, 23, 42, 0.10);
+            transition: transform 0.08s ease, box-shadow 0.12s ease;
+            min-height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.15;
+            word-break: break-word;
+            hyphens: auto;
+        }
+        body.theme-roblox .card-item:hover { transform: translateY(-1px); box-shadow: 0 14px 22px rgba(15, 23, 42, 0.14); }
+        body.theme-ff .card-item {
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.10);
+            background: rgba(20, 22, 28, 0.85);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.45);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        body.theme-minecraft .card-item {
+            border-radius: 0;
+            border: 3px solid #111;
+            box-shadow: 0 5px 0 rgba(0,0,0,0.35);
+            background: #f4f4f4;
+        }
+
+        /* ========== CAPÍTULOS / LEITOR ========== */
+        .chapters-title { margin: 20px 0; font-size: 1.5rem; color: var(--primary); }
+        .reader-title { margin-bottom: 15px; font-size: 1.3rem; color: var(--primary); }
+        .bible-text { font-size: 1.15rem; line-height: 1.8; padding: 20px; background: var(--card); border-radius: var(--radius); margin-bottom: 90px; }
+        .bible-text .verse-num { color: var(--primary); margin-right: 8px; font-weight: 600; }
+        .timer-float { position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%); background: #000; color: #fff; padding: 8px 24px; border-radius: 25px; font-size: 0.9rem; z-index: 100; }
+
+        /* ========== BOTÕES ========== */
+        .btn {
+            padding: 12px; border: none; border-radius: var(--radius); cursor: pointer; font-family: var(--font);
+            text-transform: uppercase; font-size: 0.9rem; border-bottom: 3px solid rgba(0,0,0,0.2);
+        }
+        .btn { transition: transform 0.06s ease, filter 0.12s ease, box-shadow 0.12s ease; }
+        .btn:active { transform: translateY(1px); filter: brightness(0.98); }
+        body.theme-roblox .btn {
+            border-radius: 14px;
+            border-bottom-width: 4px;
+            box-shadow: 0 10px 18px rgba(15, 23, 42, 0.14);
+        }
+        body.theme-ff .btn {
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.55);
+            letter-spacing: 1px;
+        }
+        body.theme-ff .btn--primary {
+            background: linear-gradient(180deg, #FFD600 0%, #FFB300 100%);
+            color: #111;
+        }
+        body.theme-ff .btn--red {
+            background: linear-gradient(180deg, #ff3d00 0%, #c62828 100%);
+            color: #fff;
+        }
+        body.theme-minecraft .btn {
+            border-radius: 0;
+            border: 3px solid #111;
+            border-bottom: 5px solid #111;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+        body.theme-minecraft .btn--primary { background: #3b84ff; }
+        body.theme-minecraft .btn--red { background: #e53935; }
+        .btn--red { background: #ff4d4d; color: white; }
+        .btn--primary { background: var(--primary); color: white; }
+        .btn--sm { padding: 6px 12px; font-size: 0.75rem; }
+    </style>
+</head>
+<body class="theme-roblox">
+
+    <!-- TELA: SKINS -->
+    <section id="screen-skins" class="screen active">
+        <h1 class="screen-skins__title">Bible League</h1>
+
+        <div style="max-width:850px; margin:0 auto 14px; padding:0 16px;">
+            <button type="button"
+                    class="btn btn--red"
+                    style="width:100%; font-size:0.95rem;"
+                    onclick="window.location.href='bible-league-login.html';">
+                Ir para tela de login (salvar progresso)
+            </button>
+        </div>
+
+        <div class="skin-list">
+            <div class="skin-card raiz" data-skin="raiz"><h2>Crente Raiz</h2><p>Livro Antigo</p></div>
+            <div class="skin-card rb" data-skin="roblox"><h2>BibleBlox</h2><p>Mundo Bíblico</p></div>
+            <div class="skin-card ff" data-skin="ff"><h2>BibleFire</h2><p>Palavra Flamejante</p></div>
+            <div class="skin-card mc" data-skin="minecraft"><h2>Biblecraft</h2><p>Bíblia em Blocos</p></div>
+        </div>
+
+    </section>
+
+    <!-- TELA: DASHBOARD (somente leitura) -->
+    <section id="screen-main" class="screen">
+        <header class="dashboard-header">
+            <h2 class="dashboard-header__title">Bible League <small>LEITURA</small></h2>
+            <div class="dashboard-header__actions">
+                <a class="btn btn--primary btn--sm" href="bible-league-login.html" style="text-decoration:none; display:inline-block;">Entrar</a>
+                <button type="button" class="btn btn--red btn--sm" data-action="skins">Skins</button>
+            </div>
+        </header>
+
+        <div class="notice-card">
+            <b>Modo leitura:</b> aqui não tem login, ranking e nem salvamento de progresso.
+        </div>
+
+        <h3 class="section-title">Antigo Testamento</h3>
+        <div class="grid" id="grid-vt"></div>
+        <h3 class="section-title">Novo Testamento</h3>
+        <div class="grid" id="grid-nt"></div>
+        <div style="height:50px;"></div>
+    </section>
+
+    <!-- TELA: CAPÍTULOS -->
+    <section id="screen-chapters" class="screen">
+        <button type="button" class="btn btn--red" data-action="main">← Voltar</button>
+        <h2 id="title-book" class="chapters-title">Livro</h2>
+        <div class="grid" id="grid-chapters"></div>
+    </section>
+
+    <!-- TELA: LEITOR -->
+    <section id="screen-reader" class="screen">
+        <h2 id="title-chapter" class="reader-title">Capítulo</h2>
+        <div id="timer-box" class="timer-float" style="display:none;">Aguarde...</div>
+        <div id="bible-text" class="bible-text">Lendo manuscritos...</div>
+        <button type="button" class="btn btn--red" style="width:100%;" data-action="exit-reader">Sair</button>
+    </section>
+
+    <script>
+        (function () {
+            'use strict';
+
+            var MIN_READING_SECONDS = 10, FALLBACK_READING_SECONDS = 60, WORDS_PER_SECOND = 4;
+            var API_BASE = 'https://bible-api.com', API_TRANSLATION = 'almeida';
+
+            var BOOKS = ['Gênesis','Êxodo','Levítico','Números','Deuteronômio','Josué','Juízes','Rute','1 Samuel','2 Samuel','1 Reis','2 Reis','1 Crônicas','2 Crônicas','Esdras','Neemias','Ester','Jó','Salmos','Provérbios','Eclesiastes','Cantares','Isaías','Jeremias','Lamentações','Ezequiel','Daniel','Oseias','Joel','Amós','Obadias','Jonas','Miqueias','Naum','Habacuque','Sofonias','Ageu','Zacarias','Malaquias','Mateus','Marcos','Lucas','João','Atos','Romanos','1 Coríntios','2 Coríntios','Gálatas','Efésios','Filipenses','Colossenses','1 Tessalonicenses','2 Tessalonicenses','1 Timóteo','2 Timóteo','Tito','Filemom','Hebreus','Tiago','1 Pedro','2 Pedro','1 João','2 João','3 João','Judas','Apocalipse'];
+            var CHAPTERS_COUNT = [50,40,27,36,34,24,21,4,31,24,22,25,29,36,10,13,10,42,150,31,12,8,66,52,5,48,12,14,3,9,1,4,7,3,3,3,2,14,4,28,16,24,21,28,16,16,13,6,6,4,4,5,3,6,4,3,1,13,5,5,3,5,1,1,1,22];
+            var SINGLE_CHAPTER_VERSE_COUNT = { 'Obadias': 21, 'Filemom': 25, '2 João': 13, '3 João': 14, 'Judas': 25 };
+
+            var VT_BOOKS_COUNT = 39;
+            var currentBookIndex = 0, currentChapter = 1;
+            var readingTimer = null, readingSeconds = 0;
+            var theme = 'roblox';
+
+            function showScreen(screenId) {
+                document.querySelectorAll('.screen').forEach(function (s) { s.classList.remove('active'); });
+                var s = document.getElementById(screenId);
+                if (s) s.classList.add('active');
+                if (screenId === 'screen-main') renderBookGrids();
+                window.scrollTo(0, 0);
+            }
+
+            function getBibleUrl(bookName, chapter) {
+                var single = SINGLE_CHAPTER_VERSE_COUNT[bookName];
+                var q = (single && chapter === 1) ? '1:1-' + single : String(chapter);
+                return API_BASE + '/' + encodeURIComponent(bookName) + '+' + q + '?translation=' + API_TRANSLATION;
+            }
+
+            function parseApiResponse(data) {
+                if (data.verses && data.verses.length > 0) {
+                    return data.verses.map(function (v) { return '<p><span class="verse-num">' + v.verse + '</span>' + v.text + '</p>'; }).join('');
+                }
+                if (data.text) return '<p>' + data.text.replace(/\n/g, '<br>') + '</p>';
+                return null;
+            }
+
+            function renderBookGrids() {
+                var gv = document.getElementById('grid-vt'), gn = document.getElementById('grid-nt');
+                if (!gv || !gn) return;
+                gv.innerHTML = ''; gn.innerHTML = '';
+                BOOKS.forEach(function (name, i) {
+                    var item = document.createElement('div');
+                    item.className = 'card-item';
+                    item.textContent = name;
+                    item.dataset.bookIndex = i;
+                    (i < VT_BOOKS_COUNT ? gv : gn).appendChild(item);
+                });
+            }
+
+            function openBook(bookIndex) {
+                currentBookIndex = bookIndex;
+                showScreen('screen-chapters');
+                var title = document.getElementById('title-book'), grid = document.getElementById('grid-chapters');
+                if (!title || !grid) return;
+                title.textContent = BOOKS[bookIndex];
+                grid.innerHTML = '';
+                for (var c = 1; c <= CHAPTERS_COUNT[bookIndex]; c++) {
+                    var item = document.createElement('div');
+                    item.className = 'card-item';
+                    item.textContent = c;
+                    item.dataset.chapter = c;
+                    grid.appendChild(item);
+                }
+            }
+
+            function startReadingTimer() {
+                var left = readingSeconds;
+                var box = document.getElementById('timer-box');
+                if (!box) return;
+                box.style.display = 'block';
+                if (readingTimer) clearInterval(readingTimer);
+                readingTimer = setInterval(function () {
+                    left--;
+                    box.textContent = 'Tempo sugerido de leitura: ' + left + 's';
+                    if (left <= 0) {
+                        clearInterval(readingTimer);
+                        readingTimer = null;
+                        box.textContent = 'Boa leitura. 🙏';
+                        setTimeout(function () { var b = document.getElementById('timer-box'); if (b) b.style.display = 'none'; }, 1200);
+                    }
+                }, 1000);
+            }
+
+            function openReader(chapter) {
+                currentChapter = chapter;
+                var bookName = BOOKS[currentBookIndex];
+                showScreen('screen-reader');
+                var title = document.getElementById('title-chapter'), text = document.getElementById('bible-text');
+                if (!title || !text) return;
+                title.textContent = bookName + ' ' + chapter;
+                text.innerHTML = 'Buscando na nuvem...';
+                var timerBox = document.getElementById('timer-box');
+                if (timerBox) timerBox.style.display = 'none';
+                fetch(getBibleUrl(bookName, chapter))
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        var html = parseApiResponse(data);
+                        if (html) {
+                            text.innerHTML = html;
+                            var words = text.innerText.split(/\s+/).filter(Boolean).length;
+                            readingSeconds = Math.max(MIN_READING_SECONDS, Math.floor(words / WORDS_PER_SECOND));
+                            // reduz em 20% o tempo sugerido
+                            readingSeconds = Math.max(MIN_READING_SECONDS, Math.floor(readingSeconds * 0.8));
+                        } else throw new Error();
+                        startReadingTimer();
+                    })
+                    .catch(function () {
+                        text.innerHTML = '<p style="color:red; font-weight:bold;">⚠️ Nuvem oscilando.</p><p>Leia <strong>' + bookName + ' ' + chapter + '</strong> na sua Bíblia. (Sem validação no modo leitura.)</p>';
+                        readingSeconds = Math.floor(FALLBACK_READING_SECONDS * 0.8);
+                        startReadingTimer();
+                    });
+            }
+
+            function exitReader() {
+                if (readingTimer) clearInterval(readingTimer);
+                readingTimer = null;
+                showScreen('screen-chapters');
+            }
+
+            document.body.addEventListener('click', function (e) {
+                var t = e.target.closest('[data-skin]');
+                if (t) {
+                    theme = t.dataset.skin;
+                    document.body.className = 'theme-' + theme;
+                    showScreen('screen-main');
+                    return;
+                }
+                t = e.target.closest('[data-action]');
+                if (t) {
+                    var a = t.dataset.action;
+                    if (a === 'main') showScreen('screen-main');
+                    else if (a === 'skins') showScreen('screen-skins');
+                    else if (a === 'exit-reader') exitReader();
+                    return;
+                }
+                t = e.target.closest('[data-book-index]');
+                if (t) { openBook(parseInt(t.dataset.bookIndex, 10)); return; }
+                t = e.target.closest('[data-chapter]');
+                if (t) openReader(parseInt(t.dataset.chapter, 10));
+            });
+        })();
+    </script>
+</body>
+</html>

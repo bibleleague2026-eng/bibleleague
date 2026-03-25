@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bible League - Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Bebas+Neue&family=VT323&family=Poppins:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ========== VARIÁVEIS E TEMAS ========== */
+        :root {
+            --primary: #00A2FF;
+            --secondary: #00E676;
+            --bg: #f0f2f5;
+            --card: #fff;
+            --text: #333;
+            --font: 'Poppins', sans-serif;
+            --radius: 12px;
+        }
+        .theme-roblox {
+            --primary: #00A2FF;
+            --secondary: #00E676;
+            --bg: #e9eef6;
+            --card: #ffffff;
+            --text: #1f2a37;
+            --font: 'Montserrat', 'Poppins', sans-serif;
+            --radius: 16px;
+        }
+        .theme-ff {
+            --primary: #FFD600;
+            --secondary: #FF3D00;
+            --bg: #07080b;
+            --card: rgba(18, 20, 26, 0.92);
+            --text: #f2f4f8;
+            --font: 'Bebas Neue', sans-serif;
+            --radius: 8px;
+        }
+        .theme-minecraft {
+            --primary: #55c93f;
+            --secondary: #a6773b;
+            --bg: #c9c9c9;
+            --card: #f1f1f1;
+            --text: #111;
+            --font: 'VT323', monospace;
+            --radius: 0;
+        }
+        .theme-raiz {
+            --primary: #6b4e2e;
+            --secondary: #2e7d32;
+            --bg: #f3e5c0;
+            --card: #fff6db;
+            --text: #2a1c10;
+            --font: 'IM Fell English', serif;
+            --radius: 10px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* Sem cursor de texto piscando nos campos (continua digitando normalmente) */
+        input, textarea, [contenteditable="true"] { caret-color: transparent; }
+        body { background-color: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.6; transition: background-color 0.3s, color 0.3s; }
+        body.theme-roblox {
+            background-image:
+                radial-gradient(circle at 20% 15%, rgba(0,162,255,0.18), transparent 42%),
+                radial-gradient(circle at 85% 30%, rgba(0,230,118,0.14), transparent 44%),
+                linear-gradient(0deg, rgba(255,255,255,0.72), rgba(255,255,255,0.72));
+        }
+        body.theme-ff {
+            background-image:
+                radial-gradient(circle at 30% 25%, rgba(255,214,0,0.12), transparent 45%),
+                radial-gradient(circle at 75% 35%, rgba(255,61,0,0.14), transparent 45%),
+                linear-gradient(135deg, rgba(0,0,0,0.9), rgba(10,10,14,0.96));
+        }
+        body.theme-minecraft {
+            background-image:
+                linear-gradient(0deg, rgba(0,0,0,0.06), rgba(0,0,0,0.06)),
+                repeating-linear-gradient(90deg, rgba(0,0,0,0.04) 0 6px, rgba(255,255,255,0.02) 6px 12px);
+            image-rendering: pixelated;
+        }
+
+        .screen { display: none; padding: 8px 16px 24px; max-width: 850px; margin: 0 auto; min-height: 100vh; }
+        .screen.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* ========== LOGIN / CADASTRO ========== */
+        .auth-box {
+            max-width: 560px;
+            width: 100%;
+            margin: 4px auto 32px;
+            padding: 22px 28px 28px;
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        body.theme-ff .auth-box {
+            border: 1px solid rgba(255, 214, 0, 0.22);
+            box-shadow: 0 10px 28px rgba(0,0,0,0.55);
+            backdrop-filter: blur(6px);
+        }
+        body.theme-minecraft .auth-box {
+            border-radius: 0;
+            border: 4px solid #1e1e1e;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.35);
+        }
+        .auth-box h1 {
+            text-align: center;
+            font-size: 1.8rem;
+            margin: 0 0 16px;
+            color: var(--primary);
+        }
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(0,0,0,0.15);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            background: var(--bg);
+            color: var(--text);
+        }
+        body.theme-ff .form-group input {
+            background: rgba(0,0,0,0.35);
+            border: 1px solid rgba(255,255,255,0.18);
+            color: #fff;
+        }
+        body.theme-minecraft .form-group input {
+            border-radius: 0;
+            border: 3px solid #111;
+            background: #e6e6e6;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .auth-box .btn { width: 100%; margin-top: 8px; }
+        .auth-link {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 0.9rem;
+        }
+        .auth-link a { color: var(--primary); cursor: pointer; text-decoration: underline; }
+        .auth-msg { margin-bottom: 12px; padding: 10px; border-radius: 8px; font-size: 0.9rem; }
+        .auth-msg.error { background: #ffebee; color: #c62828; }
+        .auth-msg.success { background: #e8f5e9; color: #2e7d32; }
+
+        .welcome-hero {
+            text-align: center;
+            font-size: 0.95rem;
+            line-height: 1.55;
+            margin-bottom: 18px;
+            padding: 14px 12px;
+            background: rgba(0, 162, 255, 0.08);
+            border-radius: var(--radius);
+            border-left: 4px solid var(--primary);
+        }
+        body.theme-ff .welcome-hero {
+            background: rgba(255, 214, 0, 0.08);
+            border-left-color: var(--primary);
+        }
+        body.theme-minecraft .welcome-hero { border-radius: 0; border: 3px solid #111; background: #e8e8e8; }
+        body.theme-raiz .welcome-hero { background: rgba(107, 78, 46, 0.12); border-left-color: var(--primary); }
+        .welcome-hero strong { color: var(--primary); }
+
+        .verse-day {
+            margin-top: 18px;
+            padding: 16px 14px;
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.06);
+            text-align: left;
+        }
+        body.theme-ff .verse-day {
+            border-color: rgba(255,255,255,0.12);
+            background: rgba(18, 20, 26, 0.75);
+        }
+        .verse-day__title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        .verse-day__ref { font-size: 0.85rem; font-weight: 600; color: var(--primary); margin-bottom: 10px; }
+        .verse-day__text {
+            font-size: 0.95rem;
+            line-height: 1.65;
+            font-style: italic;
+            opacity: 0.92;
+        }
+        .verse-day__text.loading { opacity: 0.55; font-style: normal; }
+
+        .btn--read-free {
+            background: linear-gradient(180deg, #00e676 0%, #00c853 100%) !important;
+            color: #063d1f !important;
+            font-weight: 700 !important;
+            border-bottom-color: rgba(0,0,0,0.25) !important;
+            box-shadow: 0 8px 20px rgba(0, 200, 83, 0.35) !important;
+        }
+        body.theme-ff .btn--read-free {
+            background: linear-gradient(180deg, #69f0ae 0%, #00e676 100%) !important;
+            color: #0d1f14 !important;
+        }
+        body.theme-minecraft .btn--read-free {
+            background: #55c93f !important;
+            color: #fff !important;
+        }
+
+        /* ========== SKINS ========== */
+        .screen-skins__title { text-align: center; font-size: 2.5rem; margin: 4px 0 16px; color: var(--primary); }
+        .skin-list { display: flex; flex-direction: column; gap: 15px; margin-top: 10px; }
+        .skin-card {
+            width: 100%; padding: 25px; text-align: center; border-radius: 15px; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 2px solid transparent;
+        }
+        .skin-card { position: relative; overflow: hidden; }
+        .skin-card h2 { letter-spacing: 0.5px; }
+        .skin-card.rb {
+            background: linear-gradient(135deg, #00A2FF 0%, #0066ff 55%, #00E676 140%);
+            color: #fff;
+        }
+        .skin-card.rb::before{
+            content:'';
+            position:absolute; inset:-40px;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.20), transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(0,0,0,0.18), transparent 55%);
+            transform: rotate(8deg);
+        }
+        .skin-card.ff {
+            background: linear-gradient(135deg, #0b0b0f 0%, #1a0f10 45%, #3a1206 100%);
+            color: #fff;
+            border-color: rgba(255, 214, 0, 0.28);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .skin-card.ff::after{
+            content:'';
+            position:absolute; inset:0;
+            background:
+                radial-gradient(circle at 25% 30%, rgba(255,214,0,0.22), transparent 45%),
+                radial-gradient(circle at 75% 60%, rgba(255,61,0,0.25), transparent 55%),
+                linear-gradient(90deg, rgba(255,255,255,0.05), transparent 30%, rgba(255,255,255,0.03));
+            mix-blend-mode: screen;
+        }
+        .skin-card.mc {
+            background: linear-gradient(180deg, #78d855 0%, #2f8f33 65%, #1e6f29 100%);
+            color: #fff;
+            border-color: #111;
+            border-width: 3px;
+            border-radius: 0;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.35);
+        }
+        .skin-card.mc::before{
+            content:'';
+            position:absolute; inset:0;
+            background:
+                repeating-linear-gradient(0deg, rgba(0,0,0,0.12) 0 6px, rgba(255,255,255,0.03) 6px 12px),
+                repeating-linear-gradient(90deg, rgba(0,0,0,0.10) 0 6px, rgba(255,255,255,0.02) 6px 12px);
+            opacity: 0.25;
+        }
+        .skin-card.raiz {
+            background: linear-gradient(135deg, #f7e7bf 0%, #e7d2a3 55%, #d5b981 100%);
+            color: #2a1c10;
+            border-color: rgba(107, 78, 46, 0.45);
+        }
+        .skin-card > * { position: relative; z-index: 1; }
+
+        /* ========== DASHBOARD ========== */
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+        .dashboard-header__title { font-size: 1.2rem; }
+        .dashboard-header__title small { font-size: 0.5em; opacity: 0.5; }
+        .dashboard-header__actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .dashboard-header__user {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+        .dashboard-header__user span {
+            font-weight: 600;
+        }
+        .dashboard-xp-bar { display: flex; gap: 10px; margin-bottom: 25px; }
+        .dashboard-xp-bar__item { flex: 1; padding: 12px; text-align: center; border-radius: var(--radius); font-size: 0.95em; }
+        .dashboard-xp-bar__item--xp { background: var(--primary); color: white; }
+        .dashboard-xp-bar__item--lvl { background: var(--secondary); color: white; }
+        .gauges { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .gauge { background: var(--card); padding: 15px; border-radius: var(--radius); text-align: center; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .gauge__svg { width: 120px; height: 70px; }
+        .gauge__bg { fill: none; stroke: #ccc; stroke-width: 10; stroke-linecap: round; opacity: 0.2; }
+        .gauge__fill { fill: none; stroke-width: 10; stroke-linecap: round; stroke-dasharray: 220; stroke-dashoffset: 220; transform: rotate(-180deg); transform-origin: center; transition: stroke-dashoffset 1s; }
+        .gauge__value { position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); font-size: 1.4em; }
+        .gauge__time { font-size: 0.75rem; color: var(--secondary); font-weight: 600; display: block; margin-top: 5px; }
+        .gauge__label { font-size: 0.6rem; opacity: 0.6; }
+        .section-title { margin: 25px 0 10px; font-size: 1.1rem; opacity: 0.8; border-left: 5px solid var(--primary); padding-left: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); gap: 10px; }
+        .card-item {
+            background: var(--card); padding: 12px; border-radius: var(--radius); text-align: center; cursor: pointer;
+            font-size: 0.85rem; border-bottom: 4px solid rgba(0,0,0,0.1);
+        }
+        body.theme-roblox .card-item {
+            border-radius: 14px;
+            border: 1px solid rgba(31,42,55,0.10);
+            box-shadow: 0 10px 18px rgba(15, 23, 42, 0.10);
+            transition: transform 0.08s ease, box-shadow 0.12s ease;
+            min-height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.15;
+            word-break: break-word;
+            hyphens: auto;
+        }
+        body.theme-roblox .card-item:hover { transform: translateY(-1px); box-shadow: 0 14px 22px rgba(15, 23, 42, 0.14); }
+        body.theme-ff .card-item {
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.10);
+            background: rgba(20, 22, 28, 0.85);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.45);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        body.theme-minecraft .card-item {
+            border-radius: 0;
+            border: 3px solid #111;
+            box-shadow: 0 5px 0 rgba(0,0,0,0.35);
+            background: #f4f4f4;
+        }
+        .card-item.completed { background: var(--secondary) !important; color: white !important; }
+
+        /* ========== RANKING ========== */
+        .ranking-title { margin: 20px 0; font-size: 1.5rem; color: var(--primary); text-align: center; }
+        .ranking-table-wrap { overflow-x: auto; margin-top: 16px; }
+        .ranking-table {
+            width: 100%; border-collapse: collapse; background: var(--card); border-radius: var(--radius);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+        .ranking-table th, .ranking-table td { padding: 12px 10px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.06); }
+        .ranking-table th { background: var(--primary); color: white; font-size: 0.85rem; }
+        .ranking-table tr:hover { background: rgba(0,0,0,0.03); }
+        .ranking-table .pos { font-weight: 700; color: var(--primary); width: 40px; text-align: center; }
+        .ranking-table .xp { font-weight: 600; color: var(--secondary); white-space: nowrap; }
+        .ranking-table .me { background: rgba(0, 162, 255, 0.12); }
+        .ranking-empty { text-align: center; padding: 40px 20px; color: var(--text); opacity: 0.8; }
+
+        /* ========== CAPÍTULOS / LEITOR ========== */
+        .chapters-title { margin: 20px 0; font-size: 1.5rem; color: var(--primary); }
+        .reader-title { margin-bottom: 15px; font-size: 1.3rem; color: var(--primary); }
+        .bible-text { font-size: 1.15rem; line-height: 1.8; padding: 20px; background: var(--card); border-radius: var(--radius); margin-bottom: 140px; }
+        .bible-text .verse-num { color: var(--primary); margin-right: 8px; font-weight: 600; }
+        .timer-float { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #000; color: #fff; padding: 8px 24px; border-radius: 25px; font-size: 0.9rem; z-index: 100; }
+        .reader-footer { position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px; background: var(--card); border-top: 2px solid rgba(0,0,0,0.05); display: flex; gap: 10px; }
+
+        /* ========== BOTÕES ========== */
+        .btn {
+            padding: 12px; border: none; border-radius: var(--radius); cursor: pointer; font-family: var(--font);
+            text-transform: uppercase; font-size: 0.9rem; border-bottom: 3px solid rgba(0,0,0,0.2);
+        }
+        .btn { transition: transform 0.06s ease, filter 0.12s ease, box-shadow 0.12s ease; }
+        .btn:active { transform: translateY(1px); filter: brightness(0.98); }
+        body.theme-roblox .btn {
+            border-radius: 14px;
+            border-bottom-width: 4px;
+            box-shadow: 0 10px 18px rgba(15, 23, 42, 0.14);
+        }
+        body.theme-ff .btn {
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.55);
+            letter-spacing: 1px;
+        }
+        body.theme-ff .btn--primary {
+            background: linear-gradient(180deg, #FFD600 0%, #FFB300 100%);
+            color: #111;
+        }
+        body.theme-ff .btn--green {
+            background: linear-gradient(180deg, #ff3d00 0%, #c62828 100%);
+            color: #fff;
+        }
+        body.theme-minecraft .btn {
+            border-radius: 0;
+            border: 3px solid #111;
+            border-bottom: 5px solid #111;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+        body.theme-minecraft .btn--primary { background: #3b84ff; }
+        body.theme-minecraft .btn--green { background: #55c93f; }
+        body.theme-minecraft .btn--red { background: #e53935; }
+        .btn--green { background: var(--secondary); color: white; }
+        .btn--green:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn--red { background: #ff4d4d; color: white; }
+        .btn--primary { background: var(--primary); color: white; }
+        .btn--sm { padding: 6px 12px; font-size: 0.75rem; }
+
+        /* WhatsApp flutuante (login / cadastro) */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 22px;
+            right: 22px;
+            z-index: 9998;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: #25d366;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 18px rgba(37, 211, 102, 0.5);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            text-decoration: none;
+        }
+        .whatsapp-float:hover {
+            transform: scale(1.07);
+            box-shadow: 0 6px 22px rgba(37, 211, 102, 0.65);
+            color: #fff;
+        }
+        .whatsapp-float:focus-visible {
+            outline: 3px solid rgba(37, 211, 102, 0.5);
+            outline-offset: 3px;
+        }
+        .whatsapp-float svg { width: 32px; height: 32px; fill: currentColor; display: block; }
+    </style>
+</head>
+<body class="theme-roblox">
+
+    <!-- TELA: LOGIN -->
+    <section id="screen-login" class="screen active">
+        <div class="auth-box">
+            <h1>Bible League</h1>
+            <div class="welcome-hero">
+                <strong>Seja bem-vindo à leitura da Bíblia!</strong><br>
+                Desenvolvido para auxiliar você a ler a Bíblia toda — capítulo a capítulo, com alegria e constância.
+            </div>
+            <p style="text-align:center; margin-bottom:16px; opacity:0.85;">Entre para salvar seu progresso e ver o ranking.</p>
+            <div style="margin:-6px 0 16px;">
+                <button type="button"
+                        onclick="window.location.href='bible-league-leitura.html';"
+                        class="btn btn--read-free"
+                        style="width:100%; font-size:0.95rem;">
+                    Abrir modo leitura (sem login)
+                </button>
+            </div>
+            <div id="verse-day" class="verse-day" aria-live="polite">
+                <div class="verse-day__title">Versículo do dia</div>
+                <div id="verse-day-ref" class="verse-day__ref"></div>
+                <div id="verse-day-text" class="verse-day__text loading">Carregando uma palavra da Escritura…</div>
+            </div>
+            <div id="login-config-warn" style="display:none; padding:10px; background:#fff3e0; border-radius:8px; font-size:0.85rem; margin-bottom:16px;">Cole o código de <code>bible-league-google-apps-script.gs</code> no Apps Script da sua planilha, publique o app da Web e confira <strong>GOOGLE_APPS_SCRIPT_URL</strong> no script desta página.</div>
+            <div id="login-msg" class="auth-msg" style="display:none;"></div>
+            <form id="form-login">
+                <div class="form-group">
+                    <label for="login-email">E-mail</label>
+                    <input type="email" id="login-email" required placeholder="seu@email.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Senha</label>
+                    <input type="password" id="login-password" required placeholder="••••••••" autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn--primary">Entrar</button>
+            </form>
+            <p class="auth-link">Não tem conta? <a id="link-register">Cadastre-se</a></p>
+        </div>
+        <a href="https://wa.me/5549999089892?text=OL%C3%81%20ESTOU%20VISITANDO%20SEU%20APP%20BIBLE%20LEAGUE%21" class="whatsapp-float" target="_blank" rel="noopener noreferrer" title="WhatsApp +55 49 99908-9892" aria-label="Fale conosco no WhatsApp">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.883 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </a>
+    </section>
+
+    <!-- TELA: CADASTRO -->
+    <section id="screen-register" class="screen">
+        <div class="auth-box">
+            <h1>Cadastro</h1>
+            <div id="register-msg" class="auth-msg" style="display:none;"></div>
+            <form id="form-register">
+                <div class="form-group">
+                    <label for="reg-email">E-mail</label>
+                    <input type="email" id="reg-email" required placeholder="seu@email.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Senha</label>
+                    <input type="password" id="reg-password" required placeholder="mín. 6 caracteres" autocomplete="new-password" minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="reg-nickname">Apelido (nickname)</label>
+                    <input type="text" id="reg-nickname" required placeholder="Como aparecer no ranking">
+                </div>
+                <div class="form-group">
+                    <label for="reg-city">Cidade</label>
+                    <input type="text" id="reg-city" placeholder="Sua cidade">
+                </div>
+                <div class="form-group">
+                    <label for="reg-state">Estado</label>
+                    <input type="text" id="reg-state" placeholder="UF ou estado">
+                </div>
+                <div class="form-group">
+                    <label for="reg-country">País</label>
+                    <input type="text" id="reg-country" placeholder="País">
+                </div>
+                <div class="form-group">
+                    <label for="reg-church">Igreja</label>
+                    <input type="text" id="reg-church" placeholder="Nome da igreja">
+                </div>
+                <button type="submit" class="btn btn--primary">Criar conta</button>
+            </form>
+            <p class="auth-link">Já tem conta? <a id="link-login">Fazer login</a></p>
+        </div>
+        <a href="https://wa.me/5549999089892?text=OL%C3%81%20ESTOU%20VISITANDO%20SEU%20APP%20BIBLE%20LEAGUE%21" class="whatsapp-float" target="_blank" rel="noopener noreferrer" title="WhatsApp +55 49 99908-9892" aria-label="Fale conosco no WhatsApp">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.883 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </a>
+    </section>
+
+    <!-- TELA: SKINS -->
+    <section id="screen-skins" class="screen">
+        <h1 class="screen-skins__title">Bible League</h1>
+        <div class="skin-list">
+            <div class="skin-card raiz" data-skin="raiz"><h2>Crente Raiz</h2><p>Livro Antigo</p></div>
+            <div class="skin-card rb" data-skin="roblox"><h2>BibleBlox</h2><p>Mundo Bíblico</p></div>
+            <div class="skin-card ff" data-skin="ff"><h2>BibleFire</h2><p>Palavra Flamejante</p></div>
+            <div class="skin-card mc" data-skin="minecraft"><h2>Biblecraft</h2><p>Bíblia em Blocos</p></div>
+        </div>
+    </section>
+
+    <!-- TELA: DASHBOARD -->
+    <section id="screen-main" class="screen">
+        <header class="dashboard-header">
+            <div>
+                <h2 class="dashboard-header__title">Bible League <small>ARC</small></h2>
+                <div class="dashboard-header__user">Logado como: <span id="current-nickname">-</span></div>
+            </div>
+            <div class="dashboard-header__actions">
+                <button type="button" class="btn btn--primary btn--sm" data-action="ranking">Ranking</button>
+                <button type="button" class="btn btn--red btn--sm" data-action="skins">Skins</button>
+                <button type="button" class="btn btn--red btn--sm" data-action="logout">Sair</button>
+            </div>
+        </header>
+        <div class="dashboard-xp-bar">
+            <div class="dashboard-xp-bar__item dashboard-xp-bar__item--xp">XP: <span id="val-xp">0</span></div>
+            <div class="dashboard-xp-bar__item dashboard-xp-bar__item--lvl">LVL: <span id="val-lvl">1</span></div>
+        </div>
+        <div class="gauges">
+            <div class="gauge">
+                <svg class="gauge__svg" viewBox="0 0 200 120"><path class="gauge__bg" d="M30,100 A70,70 0 0,1 170,100"/><path id="fill-total" class="gauge__fill" stroke="var(--primary)" d="M30,100 A70,70 0 0,1 170,100"/></svg>
+                <span class="gauge__value" id="txt-total">0%</span><span class="gauge__time" id="time-total">00:00:00</span>
+                <span class="gauge__label">Progresso total</span>
+            </div>
+            <div class="gauge">
+                <svg class="gauge__svg" viewBox="0 0 200 120"><path class="gauge__bg" d="M30,100 A70,70 0 0,1 170,100"/><path id="fill-vt" class="gauge__fill" stroke="#FFA000" d="M30,100 A70,70 0 0,1 170,100"/></svg>
+                <span class="gauge__value" id="txt-vt">0%</span><span class="gauge__time" id="time-vt">00:00:00</span>
+                <span class="gauge__label">Velho Testamento</span>
+            </div>
+            <div class="gauge">
+                <svg class="gauge__svg" viewBox="0 0 200 120"><path class="gauge__bg" d="M30,100 A70,70 0 0,1 170,100"/><path id="fill-nt" class="gauge__fill" stroke="#2196F3" d="M30,100 A70,70 0 0,1 170,100"/></svg>
+                <span class="gauge__value" id="txt-nt">0%</span><span class="gauge__time" id="time-nt">00:00:00</span>
+                <span class="gauge__label">Novo Testamento</span>
+            </div>
+        </div>
+        <h3 class="section-title">Antigo Testamento</h3>
+        <div class="grid" id="grid-vt"></div>
+        <h3 class="section-title">Novo Testamento</h3>
+        <div class="grid" id="grid-nt"></div>
+        <div style="height:50px;"></div>
+    </section>
+
+    <!-- TELA: RANKING -->
+    <section id="screen-ranking" class="screen">
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <button type="button" class="btn btn--red" data-action="main">← Voltar</button>
+            <button type="button" class="btn btn--primary" data-action="refresh-ranking">Atualizar ranking</button>
+        </div>
+        <h2 class="ranking-title">🏆 Ranking por XP</h2>
+        <div id="ranking-content" class="ranking-table-wrap">
+            <p class="ranking-empty">Carregando ranking...</p>
+        </div>
+    </section>
+
+    <!-- TELA: CAPÍTULOS -->
+    <section id="screen-chapters" class="screen">
+        <button type="button" class="btn btn--red" data-action="main">← Voltar</button>
+        <h2 id="title-book" class="chapters-title">Livro</h2>
+        <div class="grid" id="grid-chapters"></div>
+    </section>
+
+    <!-- TELA: LEITOR -->
+    <section id="screen-reader" class="screen">
+        <h2 id="title-chapter" class="reader-title">Capítulo</h2>
+        <div id="timer-box" class="timer-float">Aguarde...</div>
+        <div id="bible-text" class="bible-text">Lendo manuscritos...</div>
+        <footer class="reader-footer">
+            <button type="button" class="btn btn--red" style="flex:1" data-action="exit-reader">Sair</button>
+            <button type="button" id="btn-finish" class="btn btn--green" style="flex:2" data-action="complete">Concluir (+10 XP)</button>
+        </footer>
+    </section>
+
+    <script>
+	
+        (function () {
+            'use strict';
+
+            // ========== GOOGLE PLANILHA (Apps Script Web App) ==========
+            var GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzv6qU0tGah2opdG5S0KnnwXvN0rplEX8daD48IkjmopBOOJw8JuUPOb9yhBLZBkfLK/exec';
+            var SESSION_ID_KEY = 'bl_sheet_user_id';
+            var SESSION_TOKEN_KEY = 'bl_sheet_token';
+            var sessionToken = null;
+
+            /** text/plain evita preflight CORS; file:// (origem null) falha com application/json + POST. */
+            function apiCall(action, payload) {
+                var body = Object.assign({ action: action }, payload || {});
+                return fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(body)
+                }).then(function (r) { return r.json(); });
+            }
+
+            function persistSheetSession() {
+                if (currentUserId && sessionToken) {
+                    sessionStorage.setItem(SESSION_ID_KEY, currentUserId);
+                    sessionStorage.setItem(SESSION_TOKEN_KEY, sessionToken);
+                }
+            }
+
+            function clearSheetSession() {
+                sessionStorage.removeItem(SESSION_ID_KEY);
+                sessionStorage.removeItem(SESSION_TOKEN_KEY);
+                currentUserId = null;
+                sessionToken = null;
+            }
+
+            function sheetBackendConfigured() {
+                return !!GOOGLE_APPS_SCRIPT_URL;
+            }
+
+            /** Respostas antigas do endpoint que só implementavam ping. */
+            function isLegacyAppsScriptStub(res) {
+                return res && res.status === 'ok' && typeof res.ok === 'undefined';
+            }
+
+            var TOTAL_CHAPTERS = 1189, VT_CHAPTERS = 929, NT_CHAPTERS = 260, VT_BOOKS_COUNT = 39;
+            var XP_PER_CHAPTER = 10, XP_PER_LEVEL = 500, MIN_READING_SECONDS = 10, FALLBACK_READING_SECONDS = 60, WORDS_PER_SECOND = 4;
+            var API_BASE = 'https://bible-api.com', API_TRANSLATION = 'almeida';
+
+            var BOOKS = ['Gênesis','Êxodo','Levítico','Números','Deuteronômio','Josué','Juízes','Rute','1 Samuel','2 Samuel','1 Reis','2 Reis','1 Crônicas','2 Crônicas','Esdras','Neemias','Ester','Jó','Salmos','Provérbios','Eclesiastes','Cantares','Isaías','Jeremias','Lamentações','Ezequiel','Daniel','Oseias','Joel','Amós','Obadias','Jonas','Miqueias','Naum','Habacuque','Sofonias','Ageu','Zacarias','Malaquias','Mateus','Marcos','Lucas','João','Atos','Romanos','1 Coríntios','2 Coríntios','Gálatas','Efésios','Filipenses','Colossenses','1 Tessalonicenses','2 Tessalonicenses','1 Timóteo','2 Timóteo','Tito','Filemom','Hebreus','Tiago','1 Pedro','2 Pedro','1 João','2 João','3 João','Judas','Apocalipse'];
+            var CHAPTERS_COUNT = [50,40,27,36,34,24,21,4,31,24,22,25,29,36,10,13,10,42,150,31,12,8,66,52,5,48,12,14,3,9,1,4,7,3,3,3,2,14,4,28,16,24,21,28,16,16,13,6,6,4,4,5,3,6,4,3,1,13,5,5,3,5,1,1,1,22];
+            var SINGLE_CHAPTER_VERSE_COUNT = { 'Obadias': 21, 'Filemom': 25, '2 João': 13, '3 João': 14, 'Judas': 25 };
+
+            var state = { xp: 0, read: [], timeVT: 0, timeNT: 0, theme: 'roblox' };
+            var currentBookIndex = 0, currentChapter = 1, readingTimer = null, readingSeconds = 0;
+            var currentUserId = null;
+
+            function showMsg(containerId, text, isError) {
+                var el = document.getElementById(containerId);
+                if (!el) return;
+                el.textContent = text;
+                el.className = 'auth-msg ' + (isError ? 'error' : 'success');
+                el.style.display = 'block';
+            }
+
+            function toast(text, isError) {
+                var el = document.getElementById('app-toast');
+                if (!el) {
+                    el = document.createElement('div');
+                    el.id = 'app-toast';
+                    el.style.position = 'fixed';
+                    el.style.top = '14px';
+                    el.style.left = '50%';
+                    el.style.transform = 'translateX(-50%)';
+                    el.style.zIndex = '9999';
+                    el.style.padding = '10px 14px';
+                    el.style.borderRadius = '12px';
+                    el.style.boxShadow = '0 10px 24px rgba(0,0,0,0.18)';
+                    el.style.fontSize = '0.9rem';
+                    el.style.maxWidth = '92vw';
+                    el.style.textAlign = 'center';
+                    el.style.display = 'none';
+                    document.body.appendChild(el);
+                }
+                el.style.background = isError ? '#ffebee' : '#e8f5e9';
+                el.style.color = isError ? '#c62828' : '#2e7d32';
+                el.textContent = text;
+                el.style.display = 'block';
+                setTimeout(function () { if (el) el.style.display = 'none'; }, 2600);
+            }
+
+            function showScreen(screenId) {
+                document.querySelectorAll('.screen').forEach(function (s) { s.classList.remove('active'); });
+                var s = document.getElementById(screenId);
+                if (s) s.classList.add('active');
+                if (screenId === 'screen-main') { renderBookGrids(); updateStats(); }
+                if (screenId === 'screen-ranking') loadRanking();
+                window.scrollTo(0, 0);
+            }
+
+            function getBibleUrl(bookName, chapter) {
+                var single = SINGLE_CHAPTER_VERSE_COUNT[bookName];
+                var q = (single && chapter === 1) ? '1:1-' + single : String(chapter);
+                return API_BASE + '/' + encodeURIComponent(bookName) + '+' + q + '?translation=' + API_TRANSLATION;
+            }
+
+            function parseApiResponse(data) {
+                if (data.verses && data.verses.length > 0) {
+                    return data.verses.map(function (v) { return '<p><span class="verse-num">' + v.verse + '</span>' + v.text + '</p>'; }).join('');
+                }
+                if (data.text) return '<p>' + data.text.replace(/\n/g, '<br>') + '</p>';
+                return null;
+            }
+
+            function formatTime(seconds) {
+                var h = Math.floor(seconds / 3600), m = Math.floor((seconds % 3600) / 60), s = seconds % 60;
+                return [h, m, s].map(function (n) { return String(n).padStart(2, '0'); }).join(':');
+            }
+
+            function updateGauge(fillId, textId, cur, tot) {
+                var p = tot > 0 ? (cur / tot) * 100 : 0;
+                var f = document.getElementById(fillId), t = document.getElementById(textId);
+                if (f) f.style.strokeDashoffset = 220 - (220 * p / 100);
+                if (t) t.textContent = Math.floor(p) + '%';
+            }
+
+            function updateStats() {
+                var read = state.read;
+                var vtRead = read.filter(function (id) { return BOOKS.indexOf(id.split('-')[0]) < VT_BOOKS_COUNT; }).length;
+                var ntRead = read.filter(function (id) { return BOOKS.indexOf(id.split('-')[0]) >= VT_BOOKS_COUNT; }).length;
+                var xpEl = document.getElementById('val-xp'), lvlEl = document.getElementById('val-lvl');
+                if (xpEl) xpEl.textContent = state.xp;
+                if (lvlEl) lvlEl.textContent = Math.floor(state.xp / XP_PER_LEVEL) + 1;
+                updateGauge('fill-total', 'txt-total', read.length, TOTAL_CHAPTERS);
+                updateGauge('fill-vt', 'txt-vt', vtRead, VT_CHAPTERS);
+                updateGauge('fill-nt', 'txt-nt', ntRead, NT_CHAPTERS);
+                var tt = document.getElementById('time-total'), tv = document.getElementById('time-vt'), tn = document.getElementById('time-nt');
+                if (tt) tt.textContent = formatTime(state.timeVT + state.timeNT);
+                if (tv) tv.textContent = formatTime(state.timeVT);
+                if (tn) tn.textContent = formatTime(state.timeNT);
+            }
+
+            function save() {
+                if (!sheetBackendConfigured()) {
+                    return Promise.resolve({ error: { message: 'URL do Apps Script não configurada.' } });
+                }
+                if (!currentUserId || !sessionToken) {
+                    return Promise.resolve({ error: { message: 'Faça login para salvar o progresso.' } });
+                }
+                return apiCall('saveProfile', {
+                    id: currentUserId,
+                    token: sessionToken,
+                    email: state.email || '',
+                    nickname: state.nickname || '',
+                    city: state.city || '',
+                    state: state.state || '',
+                    country: state.country || '',
+                    church: state.church || '',
+                    xp: state.xp,
+                    read: state.read,
+                    time_vt: state.timeVT,
+                    time_nt: state.timeNT,
+                    theme: state.theme
+                }).then(function (res) {
+                    if (isLegacyAppsScriptStub(res)) {
+                        return { error: { message: 'Publique o código em bible-league-google-apps-script.gs no Apps Script.' } };
+                    }
+                    if (!res || !res.ok) {
+                        return { error: { message: (res && res.error) ? sheetErrorMessage(res.error) : 'Falha ao salvar.' } };
+                    }
+                    if (res.profile) loadProfileIntoState(res.profile);
+                    return { error: null };
+                }).catch(function () {
+                    return { error: { message: 'Erro de rede ao salvar.' } };
+                });
+            }
+
+            function refreshMyProfile() {
+                if (!sheetBackendConfigured() || !currentUserId || !sessionToken) return Promise.resolve(null);
+                return apiCall('getProfile', { id: currentUserId, token: sessionToken })
+                    .then(function (res) {
+                        if (isLegacyAppsScriptStub(res)) {
+                            toast('Atualize o Apps Script (arquivo bible-league-google-apps-script.gs).', true);
+                            return null;
+                        }
+                        if (!res || !res.ok) {
+                            toast('Erro ao ler seu perfil: ' + sheetErrorMessage(res && res.error), true);
+                            return null;
+                        }
+                        return res.profile || null;
+                    });
+            }
+
+            function renderBookGrids() {
+                var gv = document.getElementById('grid-vt'), gn = document.getElementById('grid-nt');
+                if (!gv || !gn) return;
+                gv.innerHTML = ''; gn.innerHTML = '';
+                BOOKS.forEach(function (name, i) {
+                    var item = document.createElement('div');
+                    item.className = 'card-item';
+                    if (state.read.filter(function (id) { return id.startsWith(name + '-'); }).length >= CHAPTERS_COUNT[i]) item.classList.add('completed');
+                    item.textContent = name;
+                    item.dataset.bookIndex = i;
+                    (i < VT_BOOKS_COUNT ? gv : gn).appendChild(item);
+                });
+            }
+
+            function openBook(bookIndex) {
+                currentBookIndex = bookIndex;
+                showScreen('screen-chapters');
+                var title = document.getElementById('title-book'), grid = document.getElementById('grid-chapters');
+                if (!title || !grid) return;
+                title.textContent = BOOKS[bookIndex];
+                grid.innerHTML = '';
+                for (var c = 1; c <= CHAPTERS_COUNT[bookIndex]; c++) {
+                    var item = document.createElement('div');
+                    item.className = 'card-item';
+                    if (state.read.indexOf(BOOKS[bookIndex] + '-' + c) !== -1) item.classList.add('completed');
+                    item.textContent = c;
+                    item.dataset.chapter = c;
+                    grid.appendChild(item);
+                }
+            }
+
+            function startReadingTimer() {
+                var left = readingSeconds;
+                var box = document.getElementById('timer-box'), btn = document.getElementById('btn-finish');
+                if (!box || !btn) return;
+                box.style.display = 'block';
+                if (readingTimer) clearInterval(readingTimer);
+                readingTimer = setInterval(function () {
+                    left--;
+                    box.textContent = 'Medite por ' + left + 's para validar';
+                    if (left <= 0) {
+                        clearInterval(readingTimer);
+                        readingTimer = null;
+                        box.textContent = 'Leitura validada! ✅';
+                        btn.disabled = false;
+                    }
+                }, 1000);
+            }
+
+            function openReader(chapter) {
+                currentChapter = chapter;
+                var bookName = BOOKS[currentBookIndex];
+                showScreen('screen-reader');
+                var title = document.getElementById('title-chapter'), text = document.getElementById('bible-text'), btn = document.getElementById('btn-finish');
+                if (!title || !text || !btn) return;
+                title.textContent = bookName + ' ' + chapter;
+                text.innerHTML = 'Buscando na nuvem...';
+                btn.disabled = true;
+                btn.style.display = state.read.indexOf(bookName + '-' + chapter) !== -1 ? 'none' : 'block';
+                fetch(getBibleUrl(bookName, chapter))
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        var html = parseApiResponse(data);
+                        if (html) {
+                            text.innerHTML = html;
+                            var words = text.innerText.split(/\s+/).filter(Boolean).length;
+                            // tempo base proporcional às palavras
+                            readingSeconds = Math.max(MIN_READING_SECONDS, Math.floor(words / WORDS_PER_SECOND));
+                            // reduz em 20% o tempo de meditação
+                            readingSeconds = Math.max(MIN_READING_SECONDS, Math.floor(readingSeconds * 0.8));
+                        } else throw new Error();
+                        startReadingTimer();
+                    })
+                    .catch(function () {
+                        text.innerHTML = '<p style="color:red; font-weight:bold;">⚠️ Nuvem oscilando.</p><p>Leia <strong>' + bookName + ' ' + chapter + '</strong> na sua Bíblia. Botão liberado em ' + Math.floor(FALLBACK_READING_SECONDS * 0.8) + 's.</p>';
+                        // fallback com 20% menos tempo
+                        readingSeconds = Math.floor(FALLBACK_READING_SECONDS * 0.8);
+                        startReadingTimer();
+                    });
+            }
+
+            function completeReading() {
+                var id = BOOKS[currentBookIndex] + '-' + currentChapter;
+                if (state.read.indexOf(id) !== -1) return;
+                state.read.push(id);
+                state.xp += XP_PER_CHAPTER;
+                if (currentBookIndex < VT_BOOKS_COUNT) state.timeVT += readingSeconds; else state.timeNT += readingSeconds;
+                updateStats();
+                openBook(currentBookIndex);
+                save()
+                    .then(function (r) {
+                        if (r && r.error) {
+                            console.error('save error', r.error);
+                            toast('Não consegui salvar na planilha: ' + (r.error.message || ''), true);
+                        }
+                        setTimeout(function () {
+                            var rs = document.getElementById('screen-ranking');
+                            if (rs && rs.classList.contains('active')) loadRanking();
+                        }, 350);
+                    })
+                    .catch(function () {
+                        toast('Falha ao salvar na planilha (rede).', true);
+                    });
+            }
+
+            /** Versículo do dia: mesma referência no mesmo dia (PRNG por data); texto via bible-api.com */
+            function loadVerseOfDay() {
+                var refEl = document.getElementById('verse-day-ref');
+                var textEl = document.getElementById('verse-day-text');
+                if (!refEl || !textEl) return;
+                var d = new Date();
+                var dayKey = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+                var s = dayKey % 2147483646 + 1;
+                function nextRand() {
+                    s = (s * 48271) % 2147483647;
+                    return s / 2147483647;
+                }
+                var bi = Math.floor(nextRand() * BOOKS.length);
+                var book = BOOKS[bi];
+                var maxCh = CHAPTERS_COUNT[bi];
+                var ch = Math.floor(nextRand() * maxCh) + 1;
+                fetch(getBibleUrl(book, ch))
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (!data.verses || !data.verses.length) throw new Error('empty');
+                        var vi = Math.floor(nextRand() * data.verses.length);
+                        var v = data.verses[vi];
+                        refEl.textContent = book + ' ' + ch + ':' + v.verse;
+                        textEl.textContent = String(v.text || '').replace(/\s+/g, ' ').trim();
+                        textEl.classList.remove('loading');
+                    })
+                    .catch(function () {
+                        textEl.textContent = 'Não foi possível carregar o versículo. Tente atualizar a página.';
+                        textEl.classList.remove('loading');
+                    });
+            }
+
+            function exitReader() {
+                if (readingTimer) clearInterval(readingTimer);
+                readingTimer = null;
+                showScreen('screen-chapters');
+            }
+
+            function loadRanking() {
+                var wrap = document.getElementById('ranking-content');
+                if (!wrap) return;
+                if (!sheetBackendConfigured()) {
+                    wrap.innerHTML = '<p class="ranking-empty">Configure GOOGLE_APPS_SCRIPT_URL no código para ver o ranking.</p>';
+                    return;
+                }
+                wrap.innerHTML = '<p class="ranking-empty">Carregando...</p>';
+                apiCall('ranking', { limit: 100 })
+                    .then(function (res) {
+                        if (isLegacyAppsScriptStub(res)) {
+                            wrap.innerHTML = '<p class="ranking-empty">Publique o script <code>bible-league-google-apps-script.gs</code> no Apps Script da planilha para ativar o ranking.</p>';
+                            return;
+                        }
+                        if (!res || !res.ok) {
+                            wrap.innerHTML = '<p class="ranking-empty">Erro ao carregar: ' + sheetErrorMessage(res && res.error) + '</p>';
+                            return;
+                        }
+                        var rows = res.rows || [];
+                        var ensureRows = function (rowsEnsured) {
+                            if (!rowsEnsured || rowsEnsured.length === 0) {
+                                wrap.innerHTML = '<p class="ranking-empty">Ninguém no ranking ainda. Seja o primeiro!</p>';
+                                return;
+                            }
+                            var myNick = state.nickname || '';
+                            var html = '<div style="margin:10px 0; font-size:0.85rem; opacity:0.75;">Atualizado: ' + new Date().toLocaleString() + '</div>';
+                            html += '<table class="ranking-table"><thead><tr><th class="pos">#</th><th>Apelido</th><th>Cidade</th><th>Estado</th><th>País</th><th>Igreja</th><th class="xp">XP</th><th>Nível</th></tr></thead><tbody>';
+                            rowsEnsured.forEach(function (row, i) {
+                                var pos = i + 1;
+                                var lvl = Math.floor((row.xp || 0) / XP_PER_LEVEL) + 1;
+                                var me = (row.nickname === myNick) ? ' me' : '';
+                                html += '<tr class="' + me + '"><td class="pos">' + pos + '</td><td>' + (row.nickname || '-') + '</td><td>' + (row.city || '-') + '</td><td>' + (row.state || '-') + '</td><td>' + (row.country || '-') + '</td><td>' + (row.church || '-') + '</td><td class="xp">' + (row.xp || 0) + '</td><td>' + lvl + '</td></tr>';
+                            });
+                            html += '</tbody></table>';
+                            wrap.innerHTML = html;
+                        };
+
+                        if (rows.length > 0) {
+                            ensureRows(rows);
+                        } else if (currentUserId && sessionToken) {
+                            apiCall('getProfile', { id: currentUserId, token: sessionToken })
+                                .then(function (gp) {
+                                    if (gp && gp.ok && gp.profile) {
+                                        ensureRows([{
+                                            nickname: gp.profile.nickname,
+                                            city: gp.profile.city,
+                                            state: gp.profile.state,
+                                            country: gp.profile.country,
+                                            church: gp.profile.church,
+                                            xp: gp.profile.xp
+                                        }]);
+                                    } else ensureRows([]);
+                                });
+                        } else {
+                            ensureRows([]);
+                        }
+                    })
+                    .catch(function () {
+                        wrap.innerHTML = '<p class="ranking-empty">Falha de rede ao carregar o ranking.</p>';
+                    });
+            }
+
+            function sheetErrorMessage(code) {
+                var c = String(code || '');
+                var map = {
+                    email_e_senha_obrigatorios: 'Informe e-mail e senha.',
+                    apelido_obrigatorio: 'Informe um apelido.',
+                    email_ja_cadastrado: 'Este e-mail já está cadastrado.',
+                    email_ou_senha_invalidos: 'E-mail ou senha incorretos.',
+                    sessao_invalida: 'Sessão inválida. Faça login novamente.',
+                    usuario_nao_encontrado: 'Usuário não encontrado.',
+                    sessao_expirada: 'Sessão expirou. Entre de novo.',
+                    unknown_action: 'Atualize o script no Google (veja bible-league-google-apps-script.gs).'
+                };
+                return map[c] || c || 'Erro desconhecido.';
+            }
+
+            function loadProfileIntoState(profile) {
+                if (!profile) return;
+                state.xp = profile.xp || 0;
+                state.read = Array.isArray(profile.read) ? profile.read : [];
+                state.timeVT = profile.time_vt != null ? profile.time_vt : (profile.timeVT || 0);
+                state.timeNT = profile.time_nt != null ? profile.time_nt : (profile.timeNT || 0);
+                state.theme = profile.theme || 'roblox';
+                state.email = profile.email;
+                state.nickname = profile.nickname || (profile.email ? profile.email.split('@')[0] : '');
+                state.city = profile.city;
+                state.state = profile.state;
+                state.country = profile.country;
+                state.church = profile.church;
+                document.body.className = 'theme-' + state.theme;
+                var nickEl = document.getElementById('current-nickname');
+                if (nickEl) nickEl.textContent = state.nickname || '-';
+            }
+
+            document.getElementById('link-register').addEventListener('click', function () {
+                showScreen('screen-register');
+                document.getElementById('register-msg').style.display = 'none';
+            });
+            document.getElementById('link-login').addEventListener('click', function () {
+                showScreen('screen-login');
+                document.getElementById('login-msg').style.display = 'none';
+            });
+
+            document.getElementById('form-login').addEventListener('submit', function (e) {
+                e.preventDefault();
+                if (!sheetBackendConfigured()) { showMsg('login-msg', 'Configure GOOGLE_APPS_SCRIPT_URL no código.', true); return; }
+                var email = document.getElementById('login-email').value.trim();
+                var password = document.getElementById('login-password').value;
+                apiCall('login', { email: email, password: password })
+                    .then(function (res) {
+                        if (isLegacyAppsScriptStub(res)) {
+                            showMsg('login-msg', 'Substitua o código do Apps Script pelo arquivo bible-league-google-apps-script.gs e publique uma nova versão.', true);
+                            return;
+                        }
+                        if (!res || !res.ok) {
+                            showMsg('login-msg', sheetErrorMessage(res && res.error), true);
+                            return;
+                        }
+                        currentUserId = res.id;
+                        sessionToken = res.token;
+                        persistSheetSession();
+                        if (res.profile) loadProfileIntoState(res.profile);
+                        else loadProfileIntoState({ email: email, nickname: email ? email.split('@')[0] : '' });
+                        showScreen('screen-main');
+                    })
+                    .catch(function () { showMsg('login-msg', 'Erro de rede ao entrar.', true); });
+            });
+
+            document.getElementById('form-register').addEventListener('submit', function (e) {
+                e.preventDefault();
+                if (!sheetBackendConfigured()) { showMsg('register-msg', 'Configure GOOGLE_APPS_SCRIPT_URL no código.', true); return; }
+                var email = document.getElementById('reg-email').value.trim();
+                var password = document.getElementById('reg-password').value;
+                var nickname = document.getElementById('reg-nickname').value.trim();
+                var city = document.getElementById('reg-city').value.trim();
+                var state_ = document.getElementById('reg-state').value.trim();
+                var country = document.getElementById('reg-country').value.trim();
+                var church = document.getElementById('reg-church').value.trim();
+                apiCall('register', {
+                    email: email,
+                    password: password,
+                    nickname: nickname,
+                    city: city,
+                    state: state_,
+                    country: country,
+                    church: church
+                })
+                    .then(function (res) {
+                        if (isLegacyAppsScriptStub(res)) {
+                            showMsg('register-msg', 'Substitua o código do Apps Script pelo arquivo bible-league-google-apps-script.gs e publique uma nova versão.', true);
+                            return;
+                        }
+                        if (!res || !res.ok) {
+                            showMsg('register-msg', sheetErrorMessage(res && res.error), true);
+                            return;
+                        }
+                        currentUserId = res.id;
+                        sessionToken = res.token;
+                        persistSheetSession();
+                        if (res.profile) loadProfileIntoState(res.profile);
+                        else loadProfileIntoState({ email: email, nickname: nickname, city: city, state: state_, country: country, church: church, xp: 0, read: [], time_vt: 0, time_nt: 0, theme: 'roblox' });
+                        showMsg('register-msg', 'Conta criada! Redirecionando...', false);
+                        setTimeout(function () { showScreen('screen-main'); }, 800);
+                    })
+                    .catch(function () { showMsg('register-msg', 'Erro de rede ao cadastrar.', true); });
+            });
+
+            document.body.addEventListener('click', function (e) {
+                var t = e.target.closest('[data-skin]');
+                if (t) {
+                    state.theme = t.dataset.skin;
+                    document.body.className = 'theme-' + state.theme;
+                    save();
+                    showScreen('screen-main');
+                    return;
+                }
+                t = e.target.closest('[data-action]');
+                if (t) {
+                    var a = t.dataset.action;
+                    if (a === 'ranking') showScreen('screen-ranking');
+                    else if (a === 'main') showScreen('screen-main');
+                    else if (a === 'skins') showScreen('screen-skins');
+                    else if (a === 'refresh-ranking') {
+                        loadRanking();
+                        refreshMyProfile().then(function (p) {
+                            if (p && typeof p.xp === 'number') {
+                                toast('Seu XP no banco: ' + p.xp, false);
+                            }
+                        });
+                    }
+                    else if (a === 'logout') {
+                        clearSheetSession();
+                        state = { xp: 0, read: [], timeVT: 0, timeNT: 0, theme: 'roblox' };
+                        document.body.className = 'theme-roblox';
+                        showScreen('screen-login');
+                    } else if (a === 'exit-reader') exitReader();
+                    else if (a === 'complete') completeReading();
+                    return;
+                }
+                t = e.target.closest('[data-book-index]');
+                if (t) { openBook(parseInt(t.dataset.bookIndex, 10)); return; }
+                t = e.target.closest('[data-chapter]');
+                if (t) openReader(parseInt(t.dataset.chapter, 10));
+            });
+
+            document.getElementById('login-config-warn').style.display = !GOOGLE_APPS_SCRIPT_URL ? 'block' : 'none';
+
+            loadVerseOfDay();
+
+            (function restoreSheetSession() {
+                var sid = sessionStorage.getItem(SESSION_ID_KEY);
+                var st = sessionStorage.getItem(SESSION_TOKEN_KEY);
+                if (!sid || !st || !sheetBackendConfigured()) return;
+                currentUserId = sid;
+                sessionToken = st;
+                apiCall('getProfile', { id: sid, token: st })
+                    .then(function (res) {
+                        if (res && res.ok && res.profile) {
+                            loadProfileIntoState(res.profile);
+                            showScreen('screen-main');
+                        } else {
+                            clearSheetSession();
+                        }
+                    })
+                    .catch(function () { clearSheetSession(); });
+            })();
+        })();
+    </script>
+</body>
+</html>
